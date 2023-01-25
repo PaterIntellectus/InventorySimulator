@@ -14,9 +14,15 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
-        mainmenu.cpp
-        mainmenu.h
-        mainmenu.ui
+
+        inventorywindow.h
+        inventorywindow.cpp
+        inventorywindow.ui
+
+        mainmenudialog.h
+        mainmenudialog.cpp
+        mainmenudialog.ui
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
