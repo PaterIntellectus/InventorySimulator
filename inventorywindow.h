@@ -2,7 +2,15 @@
 #define INVENTORYWINDOW_H
 
 #include <QMainWindow>
-#include <QTableWidget>
+#include <QPushButton>
+
+#include "inventorytable.h"
+#include "databasemanager.h"
+
+#include <QHBoxLayout>
+#include <QGridLayout>
+
+#include <QtSql>
 
 namespace Ui {
 class InventoryWindow;
@@ -19,8 +27,11 @@ public:
 private:
     Ui::InventoryWindow *ui;
 
-    QTableWidget *inventoryTable{ nullptr };
+    InventoryTable *myInventory{ nullptr };
+    InventoryTable *storageInventory{ nullptr };
+    QPushButton *mainMenuBtn{ nullptr };
 
+    DataBaseManager *databaseManager{ nullptr };
 
     void initWidgets();
     void initConnections();

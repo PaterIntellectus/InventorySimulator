@@ -10,9 +10,8 @@ MainMenuDialog::MainMenuDialog(QWidget *parent) :
     initWidgets();
     initConnections();
 
-    setMinimumSize(200, 50);
-    setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
-    adjustSize();
+    setFixedSize(200, 50);
+    setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 
     setWindowTitle(QStringLiteral("Симулятор Инвентаря"));
 }
@@ -26,11 +25,11 @@ void MainMenuDialog::initWidgets()
 {
     inventoryWindow = new InventoryWindow(this);
     newGameBtn = new QPushButton(QStringLiteral("Начать игру"), this);
-    exitBtn          = new QPushButton(QStringLiteral("Выход"), this);
+    exitBtn = new QPushButton(QStringLiteral("Выход"), this);
 
-    QHBoxLayout *hBoxLayout{ new QHBoxLayout(this) };
-    hBoxLayout->addWidget(newGameBtn);
-    hBoxLayout->addWidget(exitBtn);
+    QHBoxLayout *layout{ new QHBoxLayout(this) };
+    layout->addWidget(newGameBtn);
+    layout->addWidget(exitBtn);
 }
 
 void MainMenuDialog::initConnections()
