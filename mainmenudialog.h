@@ -8,8 +8,6 @@
 #include <QHBoxLayout>
 #include <QSizePolicy>
 
-
-
 namespace Ui {
 class MainMenuDialog;
 }

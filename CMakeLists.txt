@@ -26,8 +26,20 @@ set(PROJECT_SOURCES
         inventorytable.h
         inventorytable.cpp
 
+        databaseconfig.h
+
         databasemanager.h
         databasemanager.cpp
+
+        inventory.h
+        inventory.cpp
+
+        inventoryslot.h
+        inventoryslot.cpp
+
+        item.h
+        item.cpp
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

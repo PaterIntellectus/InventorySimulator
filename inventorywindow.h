@@ -6,11 +6,11 @@
 
 #include "inventorytable.h"
 #include "databasemanager.h"
+#include "inventory.h"
 
 #include <QHBoxLayout>
 #include <QGridLayout>
 
-#include <QtSql>
 
 namespace Ui {
 class InventoryWindow;
@@ -27,14 +27,20 @@ public:
 private:
     Ui::InventoryWindow *ui;
 
-    InventoryTable *myInventory{ nullptr };
-    InventoryTable *storageInventory{ nullptr };
+    InventoryTable *userInventory{ nullptr };
+    InventoryTable *appleTreeInventory{ nullptr };
     QPushButton *mainMenuBtn{ nullptr };
 
-    DataBaseManager *databaseManager{ nullptr };
+    DatabaseManager *databaseManager{ nullptr };
 
     void initWidgets();
-    void initConnections();
+    void initConnections() const;
+
+    void initUserInventory();
+    void initAppleTreeInventory();
+
+    void initInventorySlots(InventoryTable *inventoryTable);
+
 };
 
 #endif // INVENTORYWINDOW_H
