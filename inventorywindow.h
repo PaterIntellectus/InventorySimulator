@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 
-#include "inventorytable.h"
+#include "inventorytablewidget.h"
 #include "databasemanager.h"
 #include "inventory.h"
 
@@ -27,8 +27,8 @@ public:
 private:
     Ui::InventoryWindow *ui;
 
-    InventoryTable *userInventory{ nullptr };
-    InventoryTable *appleTreeInventory{ nullptr };
+    InventoryTableWidget *userInventory{ nullptr };
+    InventoryTableWidget *appleTreeInventory{ nullptr };
     QPushButton *mainMenuBtn{ nullptr };
 
     DatabaseManager *databaseManager{ nullptr };
@@ -39,7 +39,7 @@ private:
     void initUserInventory();
     void initAppleTreeInventory();
 
-    void initInventorySlots(InventoryTable *inventoryTable);
+    void initInventorySlots(InventoryTableWidget *inventoryTable);
 
 };
 

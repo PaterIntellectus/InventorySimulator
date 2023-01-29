@@ -9,7 +9,7 @@ public:
     Inventory(int id, int rows_num, int columns_num, const QString &inventory_name);
 
     int id() const { return mId; }
-    QString inventoryName() const { return mInventoryName; }
+    const QString &inventoryName() const { return mInventoryName; }
     int rowsNum() const { return mRowsNum; }
     int columnsNum() const { return mColumnsNum; }
 

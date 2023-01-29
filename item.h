@@ -8,10 +8,11 @@ class Item
 {
 public:
     Item(int id, const QString &item_name, const QString &image_path);
+    Item(const QString &item_name, const QString &image_path);
 
     int id() const { return mId; }
-    QString item_name() const { return mItem_name; }
-    QString image_path() const { return mImage_path; }
+    QString itemName() const { return mItem_name; }
+    QString imagePath() const { return mImage_path; }
 
 private:
     int mId;

@@ -47,10 +47,11 @@ void InventoryWindow::initUserInventory()
 {
     auto optInventory{ databaseManager->getInventory(0) };
     if (!optInventory.has_value()) {
-        qDebug() << "Error: no data to initialize the User inventory";
+        userInventory = new InventoryTableWidget(Inventory(0, 3, 3, "User"), this);
+        qDebug() << "Error: no data to initialize the User inventory, default values will be taken";
         return;
     }
-    userInventory = new InventoryTable(optInventory.value(), this);
+    userInventory = new InventoryTableWidget(optInventory.value(), this);
     initInventorySlots(userInventory);
 }
 
@@ -61,18 +62,16 @@ void InventoryWindow::initAppleTreeInventory()
         qDebug() << "Error: no data to initialize the Apple Tree inventory";
         return;
     }
-    appleTreeInventory = new InventoryTable(optInventory.value(), this);
+    appleTreeInventory = new InventoryTableWidget(optInventory.value(), this);
     initInventorySlots(appleTreeInventory);
 }
 
-void InventoryWindow::initInventorySlots(InventoryTable *inventoryTable)
+void InventoryWindow::initInventorySlots(InventoryTableWidget *inventoryTable)
 {
-    qDebug() << "initInventorySlots";
     auto rowsNum{ inventoryTable->rowCount() };
     auto collumnsNum{ inventoryTable->columnCount() };
     auto slotsNum{ rowsNum * collumnsNum };
     auto tableId{ inventoryTable->id() };
-
 
     for (int i{}; i < rowsNum; ++i) {
         for (int j{}; j < collumnsNum; ++j) {
@@ -80,13 +79,17 @@ void InventoryWindow::initInventorySlots(InventoryTable *inventoryTable)
 //                    << "rowsNum =" << rowsNum << "; collumnsNum =" << collumnsNum
 //                    << "; slotsNum =" << slotsNum << "; tableId =" << tableId;
             auto optSlot{ databaseManager->getInventorySlot(tableId, --slotsNum) };
-            qDebug() << optSlot->inventoryId() << optSlot->num();
+
             if (optSlot->itemQuantity()) {
                 auto optItem{ databaseManager->getItem(optSlot->itemId()) };
-                QTableWidgetItem *tableItem{ new QTableWidgetItem(QIcon(optItem->image_path()), optItem->item_name()) };
-                userInventory->setItem(i, j, tableItem);
+
+                QTableWidgetItem *tableItem{ new QTableWidgetItem(optSlot->itemQuantity()) };
+                tableItem->setData(
+                            Qt::DecorationRole,
+                            QPixmap(optItem->imagePath()).scaled(inventoryCellSize, inventoryCellSize)
+                            );
+                inventoryTable->setItem(i, j, tableItem);
             }
         }
     }
-    qDebug() << "~initInventorySlots";
 }

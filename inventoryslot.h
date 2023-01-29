@@ -1,6 +1,8 @@
 #ifndef INVENTORYSLOT_H
 #define INVENTORYSLOT_H
 
+#include <QVariant>
+#include <QMetaType>
 
 class InventorySlot
 {

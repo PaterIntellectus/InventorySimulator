@@ -9,8 +9,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql Gui)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql Gui)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -23,8 +23,11 @@ set(PROJECT_SOURCES
         inventorywindow.cpp
         inventorywindow.ui
 
-        inventorytable.h
-        inventorytable.cpp
+        inventorytablewidget.h
+        inventorytablewidget.cpp
+
+        inventorytablewidgetitem.h
+        inventorytablewidgetitem.cpp
 
         databaseconfig.h
 
@@ -65,7 +68,11 @@ else()
     endif()
 endif()
 
-target_link_libraries(InventorySimulator PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Sql)
+target_link_libraries(InventorySimulator PRIVATE
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Sql
+    Qt${QT_VERSION_MAJOR}::Gui
+)
 
 set_target_properties(InventorySimulator PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

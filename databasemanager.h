@@ -45,7 +45,12 @@ private:
     bool selectInventorySlot(int inventory_id, int num);
     bool selectItem(int id);
 
+    bool updateInventory(const Inventory &inventory);
+    bool updateInventorySlot(const InventorySlot &slot);
+    bool updateItem(const Item& item);
+
     bool showSelectedTables();
+    void showLastError();
 };
 
 #endif // DATABASEMANAGER_H
