@@ -32,7 +32,7 @@ private:
     QSqlDatabase mDatabase;
     QSqlQuery mQuery;
 
-    void initTables();
+    void createTables();
     void initInventories();
     void initInventorySlots();
     void initItems();

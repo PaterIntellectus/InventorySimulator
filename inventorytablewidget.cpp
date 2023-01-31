@@ -1,7 +1,8 @@
 #include "inventorytablewidget.h"
 
 InventoryTableWidget::InventoryTableWidget(const Inventory &inventory, QWidget *parent)
-    : QTableWidget(inventory.rowsNum(), inventory.columnsNum(), parent ), mId{ inventory.id() }, mName{ inventory.inventoryName() }
+    : QTableWidget(inventory.rowsNum(), inventory.columnsNum(), parent ),
+      mId{ inventory.id() }, mName{ inventory.inventoryName() }, mIsSource{ inventory.isSource() }
 {
     configureAppearance();
 
@@ -16,12 +17,9 @@ InventoryTableWidget::~InventoryTableWidget()
 
 void InventoryTableWidget::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::RightButton) {
-        auto item{ itemAt(event->pos()) };
-        if (!item) {
-            return;
-        }
-        delete item;
+    qDebug() << "mIsSource" << mIsSource;
+    if (!mIsSource && event->button() == Qt::RightButton) {
+        deleteItem(event->pos());
     } else {
         QTableWidget::mousePressEvent(event);
     }
@@ -49,14 +47,6 @@ void InventoryTableWidget::configureAppearance()
 void InventoryTableWidget::deleteItem(const QPoint &pos)
 {
     QTableWidgetItem *item = itemAt(pos);
-    if (!item) {
-        qDebug() << "Didn't fing the item";
-        return;
-    }
-    qDebug() << "item found";
-
-    item->setData(
-                Qt::DecorationRole,
-                QPixmap()
-                );
+    if (!item) { return; }
+    delete item;
 }

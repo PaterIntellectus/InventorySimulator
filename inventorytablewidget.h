@@ -38,6 +38,7 @@ private slots:
 private:
     int mId;
     QString mName;
+    bool mIsSource;
 
     void configureAppearance();
 };

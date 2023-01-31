@@ -47,8 +47,7 @@ void InventoryWindow::initUserInventory()
 {
     auto optInventory{ databaseManager->getInventory(0) };
     if (!optInventory.has_value()) {
-        userInventory = new InventoryTableWidget(Inventory(0, 3, 3, "User"), this);
-        qDebug() << "Error: no data to initialize the User inventory, default values will be taken";
+        qDebug() << "Error: no data to initialize the User inventory";
         return;
     }
     userInventory = new InventoryTableWidget(optInventory.value(), this);

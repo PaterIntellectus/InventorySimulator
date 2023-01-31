@@ -14,13 +14,13 @@ DatabaseManager::DatabaseManager(QWidget *parent, const QString &dbtype, const Q
 
     mQuery = QSqlQuery(mDatabase);
 
-    initTables();
-    initInventories();
+    createTables();
     initItems();
+    initInventories();
     initInventorySlots();
 }
 
-void DatabaseManager::initTables()
+void DatabaseManager::createTables()
 {
     // inventory
     mQuery.exec(
@@ -30,6 +30,7 @@ void DatabaseManager::initTables()
                     "rows_num INTEGER NOT NULL, "
                     "columns_num INTEGER NOT NULL, "
                     "inventory_name VARCHAR(255) NOT NULL, "
+                    "is_source BOOLEAN, "
 
                     "PRIMARY KEY (id)"
                     ");"
@@ -83,13 +84,13 @@ void DatabaseManager::initTables()
 
 void DatabaseManager::initInventories()
 {
-    if (!insertInventory(Inventory(0, 3, 3, QStringLiteral("User")))) {
+    if (!insertInventory(Inventory(0, 3, 3, QStringLiteral("User"), false))) {
         showLastError();
     } else {
         qDebug() << "User inventory initialized";
     }
 
-    if (!insertInventory(Inventory(1, 1, 1, QStringLiteral("Apple tree")))) {
+    if (!insertInventory(Inventory(1, 1, 1, QStringLiteral("Apple tree"), true))) {
         showLastError();
     } else {
         qDebug() << "Apple tree inventory initialized";
@@ -98,16 +99,35 @@ void DatabaseManager::initInventories()
 
 void DatabaseManager::initInventorySlots()
 {
-    for (int i{}; selectInventory(i) && mQuery.next(); ++i) {
-        auto inventory{ getInventory(i) };
-        for (int j{}; j < inventory->countSlots(); ++j) {
-            if (!insertInventorySlot(InventorySlot(inventory->id(), j))) {
-               showLastError();
-            } else {
-               qDebug() << "Inventory slot #" << i << '.' << j << "initialized";
-            }
+    auto inventory{ getInventory(0) };
+    for (int j{}; j < inventory->countSlots(); ++j) {
+        if (!insertInventorySlot(InventorySlot(inventory->id(), j))) {
+           showLastError();
+        } else {
+           qDebug() << "User slot #" << j << "initialized";
         }
     }
+
+    inventory= getInventory(1);
+    for (int j{}; j < inventory->countSlots(); ++j) {
+        if (!insertInventorySlot(InventorySlot(inventory->id(), j, 1, 1))) {
+           showLastError();
+        } else {
+           qDebug() << "Apple tree slot #" << j << "initialized";
+        }
+    }
+
+    // works, but doesn't initializes items
+//    for (int i{}; selectInventory(i) && mQuery.next(); ++i) {
+//        auto inventory{ getInventory(i) };
+//        for (int j{}; j < inventory->countSlots(); ++j) {
+//            if (!insertInventorySlot(InventorySlot(inventory->id(), j))) {
+//               showLastError();
+//            } else {
+//               qDebug() << "Inventory slot #" << i << '.' << j << "initialized";
+//            }
+//        }
+//    }
 }
 
 void DatabaseManager::initItems()
@@ -123,14 +143,15 @@ bool DatabaseManager::insertInventory(const Inventory &inventory)
 {
     mQuery.prepare(
                 QStringLiteral(
-                    "INSERT INTO inventory (id, rows_num, columns_num, inventory_name)"
-                    "VALUES (:id, :rows_num, :columns_num, :inventory_name)"
+                    "INSERT INTO inventory (id, rows_num, columns_num, inventory_name, is_source)"
+                    "VALUES (:id, :rows_num, :columns_num, :inventory_name, :is_source)"
                     )
                 );
     mQuery.bindValue(QStringLiteral(":id"), inventory.id());
     mQuery.bindValue(QStringLiteral(":rows_num"), inventory.rowsNum());
     mQuery.bindValue(QStringLiteral(":columns_num"), inventory.columnsNum());
     mQuery.bindValue(QStringLiteral(":inventory_name"), inventory.inventoryName());
+    mQuery.bindValue(QStringLiteral(":is_source"), inventory.isSource());
     return mQuery.exec();
 }
 
@@ -205,7 +226,7 @@ bool DatabaseManager::updateInventory(const Inventory &inventory)
     mQuery.prepare(
                 QStringLiteral(
                     "UPDATE inventory "
-                    "SET rows_num = :rows_num, columns_num = :columns_num, inventory_name = :inventory_name "
+                    "SET rows_num = :rows_num, columns_num = :columns_num, inventory_name = :inventory_name, is_source = :is_source"
                     "WHERE id = :id;"
                     )
                 );
@@ -213,6 +234,7 @@ bool DatabaseManager::updateInventory(const Inventory &inventory)
     mQuery.bindValue(QStringLiteral(":rows_num"), inventory.columnsNum());
     mQuery.bindValue(QStringLiteral(":columns_num"), inventory.rowsNum());
     mQuery.bindValue(QStringLiteral(":inventory_name"), inventory.inventoryName());
+    mQuery.bindValue(QStringLiteral(":is_source"), inventory.isSource());
     return mQuery.exec();
 }
 
@@ -257,7 +279,8 @@ std::optional<Inventory> DatabaseManager::getInventory(int id)
                 mQuery.value(mQuery.record().indexOf("id")).toInt(),
                 mQuery.value(mQuery.record().indexOf("rows_num")).toInt(),
                 mQuery.value(mQuery.record().indexOf("columns_num")).toInt(),
-                mQuery.value(mQuery.record().indexOf("inventory_name")).toString()
+                mQuery.value(mQuery.record().indexOf("inventory_name")).toString(),
+                mQuery.value(mQuery.record().indexOf("is_source")).toBool()
                 );
 }
 
