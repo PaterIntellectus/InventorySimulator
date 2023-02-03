@@ -16,6 +16,8 @@ InventoryWindow::InventoryWindow(QWidget *parent) :
     adjustSize();
     setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
+
+    setWindowIcon(QIcon(APPLEIMAGE));
     setWindowTitle(QStringLiteral("Симулятор Инвентаря"));
 }
 
@@ -34,61 +36,22 @@ void InventoryWindow::initWidgets()
     layout->setSizeConstraint(QLayout::SizeConstraint::SetFixedSize);
     layout->addWidget(userInventory, 0, 0, 3, 1);
     layout->addWidget(appleTreeInventory, 0, 1, 1, 1);
-    layout->addWidget(mainMenuBtn, 1, 1, 1, 1);
+    layout->addWidget(mainMenuBtn, 2, 1, 1, 1);
 }
 
 void InventoryWindow::initConnections() const
 {
     connect(mainMenuBtn, &QPushButton::clicked, this, &QMainWindow::close);
-
+    connect(mainMenuBtn, &QPushButton::clicked, userInventory, &QTableWidget::clear);
+    connect(mainMenuBtn, &QPushButton::clicked, qobject_cast<QWidget*>(parent()), &QWidget::show);
 }
 
 void InventoryWindow::initUserInventory()
 {
-    auto optInventory{ databaseManager->getInventory(0) };
-    if (!optInventory.has_value()) {
-        qDebug() << "Error: no data to initialize the User inventory";
-        return;
-    }
-    userInventory = new InventoryTableWidget(optInventory.value(), this);
-    initInventorySlots(userInventory);
+    userInventory = new InventoryTableWidget(USERINVENTORYID, databaseManager, this);
 }
 
 void InventoryWindow::initAppleTreeInventory()
 {
-    auto optInventory{ databaseManager->getInventory(1) };
-    if (!optInventory.has_value()) {
-        qDebug() << "Error: no data to initialize the Apple Tree inventory";
-        return;
-    }
-    appleTreeInventory = new InventoryTableWidget(optInventory.value(), this);
-    initInventorySlots(appleTreeInventory);
-}
-
-void InventoryWindow::initInventorySlots(InventoryTableWidget *inventoryTable)
-{
-    auto rowsNum{ inventoryTable->rowCount() };
-    auto collumnsNum{ inventoryTable->columnCount() };
-    auto slotsNum{ rowsNum * collumnsNum };
-    auto tableId{ inventoryTable->id() };
-
-    for (int i{}; i < rowsNum; ++i) {
-        for (int j{}; j < collumnsNum; ++j) {
-//            qDebug()
-//                    << "rowsNum =" << rowsNum << "; collumnsNum =" << collumnsNum
-//                    << "; slotsNum =" << slotsNum << "; tableId =" << tableId;
-            auto optSlot{ databaseManager->getInventorySlot(tableId, --slotsNum) };
-
-            if (optSlot->itemQuantity()) {
-                auto optItem{ databaseManager->getItem(optSlot->itemId()) };
-
-                QTableWidgetItem *tableItem{ new QTableWidgetItem(optSlot->itemQuantity()) };
-                tableItem->setData(
-                            Qt::DecorationRole,
-                            QPixmap(optItem->imagePath()).scaled(inventoryCellSize, inventoryCellSize)
-                            );
-                inventoryTable->setItem(i, j, tableItem);
-            }
-        }
-    }
+    appleTreeInventory = new InventoryTableWidget(APPLETREEINVENTORYID, databaseManager, this);
 }

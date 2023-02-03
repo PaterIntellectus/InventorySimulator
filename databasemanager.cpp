@@ -20,6 +20,53 @@ DatabaseManager::DatabaseManager(QWidget *parent, const QString &dbtype, const Q
     initInventorySlots();
 }
 
+std::optional<Inventory> DatabaseManager::getInventory(int id)
+{
+    if (!selectInventory(id) || !mQuery.next()) {
+        showLastError();
+        return std::nullopt;
+    }
+    return Inventory(
+                mQuery.value(mQuery.record().indexOf("id")).toInt(),
+                mQuery.value(mQuery.record().indexOf("rows_num")).toInt(),
+                mQuery.value(mQuery.record().indexOf("columns_num")).toInt(),
+                mQuery.value(mQuery.record().indexOf("inventory_name")).toString(),
+                mQuery.value(mQuery.record().indexOf("is_source")).toBool()
+                );
+}
+
+std::optional<InventorySlot> DatabaseManager::getInventorySlot(int inventory_id, int num)
+{
+    if (!selectInventorySlot(inventory_id, num) || !mQuery.next()) {
+        showLastError();
+        return std::nullopt;
+    }
+    return InventorySlot(
+                mQuery.value(mQuery.record().indexOf("inventory_id")).toInt(),
+                mQuery.value(mQuery.record().indexOf("num")).toInt(),
+                mQuery.value(mQuery.record().indexOf("item_id")).toInt(),
+                mQuery.value(mQuery.record().indexOf("item_quantity")).toInt()
+                );
+}
+
+std::optional<Item> DatabaseManager::getItem(int id)
+{
+    if (!selectItem(id) || !mQuery.next()) {
+        showLastError();
+        return std::nullopt;
+    }
+    return Item(
+                mQuery.value(mQuery.record().indexOf("id")).toInt(),
+                mQuery.value(mQuery.record().indexOf("item_name")).toString(),
+                mQuery.value(mQuery.record().indexOf("image_path")).toString()
+                );
+}
+
+QList<InventorySlot> DatabaseManager::getAllInventorySlots(int inventory_id, int num)
+{
+
+}
+
 void DatabaseManager::createTables()
 {
     // inventory
@@ -267,48 +314,6 @@ bool DatabaseManager::updateItem(const Item &item)
     mQuery.bindValue(QStringLiteral(":item_name"), item.itemName());
     mQuery.bindValue(QStringLiteral(":image_path"), item.imagePath());
     return mQuery.exec();
-}
-
-std::optional<Inventory> DatabaseManager::getInventory(int id)
-{
-    if (!selectInventory(id) || !mQuery.next()) {
-        showLastError();
-        return std::nullopt;
-    }
-    return Inventory(
-                mQuery.value(mQuery.record().indexOf("id")).toInt(),
-                mQuery.value(mQuery.record().indexOf("rows_num")).toInt(),
-                mQuery.value(mQuery.record().indexOf("columns_num")).toInt(),
-                mQuery.value(mQuery.record().indexOf("inventory_name")).toString(),
-                mQuery.value(mQuery.record().indexOf("is_source")).toBool()
-                );
-}
-
-std::optional<InventorySlot> DatabaseManager::getInventorySlot(int inventory_id, int num)
-{
-    if (!selectInventorySlot(inventory_id, num) || !mQuery.next()) {
-        showLastError();
-        return std::nullopt;
-    }
-    return InventorySlot(
-                mQuery.value(mQuery.record().indexOf("inventory_id")).toInt(),
-                mQuery.value(mQuery.record().indexOf("num")).toInt(),
-                mQuery.value(mQuery.record().indexOf("item_id")).toInt(),
-                mQuery.value(mQuery.record().indexOf("item_quantity")).toInt()
-                );
-}
-
-std::optional<Item> DatabaseManager::getItem(int id)
-{
-    if (!selectItem(id) || !mQuery.next()) {
-        showLastError();
-        return std::nullopt;
-    }
-    return Item(
-                mQuery.value(mQuery.record().indexOf("id")).toInt(),
-                mQuery.value(mQuery.record().indexOf("item_name")).toString(),
-                mQuery.value(mQuery.record().indexOf("image_path")).toString()
-                );
 }
 
 bool DatabaseManager::showSelectedTables()

@@ -6,7 +6,7 @@
 
 #include "inventorytablewidget.h"
 #include "databasemanager.h"
-#include "inventory.h"
+#include "config.h"
 
 #include <QHBoxLayout>
 #include <QGridLayout>
@@ -38,9 +38,6 @@ private:
 
     void initUserInventory();
     void initAppleTreeInventory();
-
-    void initInventorySlots(InventoryTableWidget *inventoryTable);
-
 };
 
 #endif // INVENTORYWINDOW_H

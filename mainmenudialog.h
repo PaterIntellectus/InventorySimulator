@@ -3,10 +3,12 @@
 
 #include <QDialog>
 #include <QPushButton>
-#include "inventorywindow.h"
 
 #include <QHBoxLayout>
 #include <QSizePolicy>
+
+#include "inventorywindow.h"
+#include "config.h"
 
 namespace Ui {
 class MainMenuDialog;

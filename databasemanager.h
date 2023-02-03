@@ -7,7 +7,7 @@
 
 #include <QtSql>
 
-#include "databaseconfig.h"
+#include "config.h"
 #include "inventory.h"
 #include "inventoryslot.h"
 #include "item.h"
@@ -27,6 +27,8 @@ public:
     std::optional<Inventory> getInventory(int id);
     std::optional<InventorySlot> getInventorySlot(int inventory_id, int num);
     std::optional<Item> getItem(int id);
+
+    QList<InventorySlot> getAllInventorySlots(int inventory_id, int num);
 
 private:
     QSqlDatabase mDatabase;
